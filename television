@@ -1,0 +1,71 @@
+#!/bin/sh
+dummy="./.cache"
+[ -z "$dummy" ] && mkdir -p "$dummy"
+
+# comprobacion de dependencias
+dep_ck () {
+	for dep in "$@"; do
+		command -v "$dep" 1>/dev/null || { printf "$dep not found. Please install it. ($dep no encontrado. Por favor instalalo) .\\n" ; exit 2; }
+	done
+}
+dep_ck "tr" "sed" "xdo" "curl" "printf" "jq" "youtube-dl" "mpv" "dmenu" "awk" "grep"
+
+case $1 in
+	-es|es) a="$(curl -sf 'https://www.tdtchannels.com/lists/tv.m3u' | grep -v '#')" && vent=$(xdo id) && xdo hide $vent
+		while true; do
+			b="$(echo "$a" | dmenu -i -l 30 -sb '#661a1a' -p 'television española')"
+			[ -z "$b" ] && xdo show $vent && exit || mpv --really-quiet \
+				--user-agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36" "$b" #>/dev/null 2>&1
+		done &
+		;; #individuales
+	
+	-radio|-r) a="$(curl -4 -sf 'https://www.tdtchannels.com/lists/radio.m3u8' | grep -v '#')"
+		while true; do
+			b="$(echo "$a" | dmenu -i -l 30 -sb '#661a1a' -p 'television española')"
+				[ -z "$b" ] && exit || mpv --really-quiet "$b" 2>/dev/null
+		done
+		;;
+	
+	--help|-h|h) printf "opciones son -es, -radio -r , --descargar, --lista -l, -li\\n" ;;
+	
+	-d|--descargar) a=$(curl -sf 'https://raw.githubusercontent.com/iptv-org/iptv/master/README.md'  |
+		awk '/http/' | grep -o -P '(?<=code>).*(?=</code)' | sed 's/<.*//' |
+		dmenu -i -l 30 -sb '#661a1a' -p 'television') && b=$(curl -4 -sf "$a" | grep -v '#') && mpv --really-quiet $b ;;
+	
+	--lista|-l|l) b="$(curl -sf https://raw.githubusercontent.com/iptv-org/iptv/master/README.md | awk '/http/' |
+		grep -o -P '(?<=code>).*(?=</code)' | sed 's/<.*//')" 
+		vent=$(xdo id) && xdo hide $vent
+		while true; do
+			c="$(echo "$b" | dmenu -i -l 30 -p television  -sb '#7a998d' -nb '#262626' )"
+			[ -z "$c" ] && xdo show $vent && exit
+			mpv --really-quiet --script=./plugins/playlistmanager.lua --use-filedir-conf=yes \
+				 --user-agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:53.0) Gecko/20100101 Firefox/53.0" "$c"
+		done & 
+		;;
+	
+	--li|-li|li) mpv --script=./plugins/playlistmanager.lua --use-filedir-conf=yes --user-agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:53.0) Gecko/20100101 Firefox/53.0" \
+		$(curl -sf  'https://www.tdtchannels.com/lists/tv.w3u' | jq '.groups[].stations[] | "\(.name) \(.url)"' | dmenu -i -l 30 -p television -sb '#661a1a' ) >/dev/null & ;;
+esac
+#fzf << EOF
+#descargar/actualizar lista de reproduccion
+#EOF
+#a=$(curl -sf https://raw.githubusercontent.com/iptv-org/iptv/master/README.md | awk '/http/' | grep -o -P '(?<=code>).*(?=</code)' | sed 's/<.*//'  | dmenu -i -l 30 -p television -sb '#661a1a' ) && mpv $a
+
+[ -n "$1" ] && exit
+
+a="$(curl -sf https://iptv-org.github.io/iptv/channels.json | jq '.[] | "\(.name) \(.url)"' | tr -d '"')"
+
+while true; do
+	b="$(echo "$a" | dmenu -i -l 30 -sb '#661a1a' -p 'canal' | awk '{print $NF}')" && [ -z "$b" ] && exit
+	mpv --really-quiet --user-agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:53.0) Gecko/20100101 Firefox/53.0" "$b" #>/dev/null 2>&1 #individuales
+	#[ -z "$b" ] && exit
+done &
+
+#a="$(curl -4 -sf https://iptv-org.github.io/iptv/channels.json | jq '.[] | "\(.name) \(.url)"' | tr -d '"' \
+#| dmenu -i -l 30 -sb '#661a1a' -p 'canal' -fn 'Ubuntu Mono' | awk '{print $NF}')" && [ -n "$a" ] &&
+#mpv --user-agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:53.0) Gecko/20100101 Firefox/53.0" $opt "$a" 2>&1 /dev/null & #individuales
+
+
+#a="$(curl -4 -sf https://iptv-org.github.io/iptv/channels.json | jq '.[] | "\(.name) \(.url)"' | tr -d '"' \
+#| fzf --reverse --cycle | awk '{print $NF}')" && [ -n "$a" ] &&
+#mpv --user-agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:53.0) Gecko/20100101 Firefox/53.0" $opt "$a" 2>&1 /dev/null & #individuales
