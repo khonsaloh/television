@@ -114,7 +114,7 @@ CHANNELS_LIST=$(curl -sL "$main_url" \
 _play() {
 	printf '%s\n' "Fetching channel, please wait..."
 	vent=$(xdotool getactivewindow) && xdotool windowunmap $vent \
-		&& mpv "${*##* }" --realy-quiet --force-media-title="${*%%  *}" ; xdotool windowmap $vent
+		&& mpv "${*##* }" --really-quiet --force-media-title="${*%%  *}" ; xdotool windowmap $vent
 	}
 
 export -f _play
