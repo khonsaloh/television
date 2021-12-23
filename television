@@ -13,6 +13,7 @@ re="\033[0m"
 table=1
 fzf=0
 main_url="https://iptv-org.github.io/iptv/channels.json"
+location='/usr/local/bin/television'
 
 help() {
 printf "opciones son:\\n"
@@ -22,7 +23,17 @@ printf '%b' "${y}-d${re}\\tpara descargar el archivo m3u\\n"
 printf '%b' "${y}-l${re}\\tpara listas de reproduccion, (pulsando p se obtiene un menu)\\n"
 printf '%b' "${y}-le${re}\\tpara listas de reproduccion en español exclusivamente, (pulsando p se obtiene un menu)\\n"
 printf '%b' "${y}-L${re}\\tpara solo obtener el link\\n" 
+printf '%b' "${y}-u${re}\\tpara actualizar script\\n" 
 }
+
+update () {
+url='https://raw.githubusercontent.com/khonsaloh/television/master/television'
+command -v doas >/dev/null && auth=doas
+command -v sudo >/dev/null && auth=sudo
+$auth curl -sL $url -o $location
+$auth chmod +x $location
+}
+
 
 case $1 in
 	-es|es) 
@@ -57,7 +68,8 @@ case $1 in
 			[ -n "$rec" ] && vent=$(xdotool getactivewindow) && xdotool windowunmap $vent
 			url=$(grep "$rec.m3u$" /tmp/iptv_categories)
 			[ -z "$rec" ] && exit
-			mpv --script=./plugins/playlistmanager.lua --use-filedir-conf=yes "$url"
+			mpv --script=./plugins/playlistmanager.lua \
+				--use-filedir-conf=yes "$url"
 			xdotool windowmap $vent
 		done 
 		;;
@@ -88,6 +100,11 @@ case $1 in
 	 	| jq -r '["CANAL","ENLACE"], ["----","------"], (.[] | [.name, .url]) | @csv' \
 		| dmenu -i -l 30 | awk '{print $NF}')"
 		[ -n "$a" ] && ffmpeg -i "$a" -c copy /tmp/out.ts; mpv /tmp/out.ts
+		;;
+	 -u) 
+		tele=$(command -v television)
+		url="$(curl -sL 'https://raw.githubusercontent.com/khonsaloh/television/master/television')"
+		diff -q "$tele" <(echo "$url") >/dev/null && printf "no hay actualizaciones\\n" || update
 		;;
 	
 	*) [ -n "$1" ] && help ;;
