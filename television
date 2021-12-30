@@ -96,7 +96,7 @@ case $1 in
 		url=$(curl -Lsf 'https://iptv-org.github.io/iptv/channels.json' \
 			| jq -r '["CANAL","ENLACE"], ["----","------"], (.[] | [.name, .url]) | @csv')
 		printf '%b' "$url\n" | column -t -s',' | tr -d '"' \
-			| dmenu -i -l 30 -fn 'mono' -p 'elige enlace: ' | awk '{print $NF}'
+			| fzf --prompt='elige enlace: ' --with-nth="1..-2"| awk '{print $NF}'
 
 		;;
 
