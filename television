@@ -14,6 +14,11 @@ table=1
 fzf=0
 main_url="https://iptv-org.github.io/iptv/channels.json"
 location='/usr/local/bin/television'
+History=0
+devour=1
+
+# allow custom variables in configuration file
+[ -f "$HOME"/.config/television ] && . "$HOME"/.config/television
 
 help() {
 printf "opciones son:\\n"
@@ -36,7 +41,7 @@ $auth chmod +x $location
 
 
 case $1 in
-	-es|es) 
+	-es) 
 		a="$(curl -Lsf 'https://www.tdtchannels.com/lists/tv.m3u' | grep -v '#')" \
 			&& vent=$(xdotool getactivewindow) && xdotool windowunmap $vent
 		while true; do
@@ -59,7 +64,7 @@ case $1 in
 		dmenu -i -l 30 -sb '#661a1a' -p 'television') && curl -sfL $url -o $PWD/"$(echo $url \
 		| awk -F'/' '{print $NF}')" ;;
 	
-	-l|l) 
+	-l) 
 		curl -Lsf https://raw.githubusercontent.com/iptv-org/iptv/master/README.md | grep 'http' \
 			| grep -o -P '(?<=code>).*(?=</code)' | sed 's/<.*//' >/tmp/iptv_categories
 		while true; do
@@ -73,7 +78,7 @@ case $1 in
 			xdotool windowmap $vent
 		done 
 		;;
-	-le|le)
+	-le)
 		url=$(curl -Lsf  'https://www.tdtchannels.com/lists/tv.w3u' \
 			| jq -r '["CANAL","ENLACE"], ["----","------"], (.groups[].stations[] | [.name, .url]) | @csv')
 		[ -n "$url" ] && vent=$(xdotool getactivewindow) && xdotool windowunmap $vent
@@ -128,10 +133,17 @@ CHANNELS_LIST=$(curl -sL "$main_url" \
 
 )
 
+hide_win () {
+	vent=$(xdotool getactivewindow) \
+		&& xdotool windowunmap $vent
+	$@
+	xdotool windowmap $vent
+}
+
+export -f hide_win
 _play() {
 	printf '%s\n' "Fetching channel, please wait..."
-	vent=$(xdotool getactivewindow) && xdotool windowunmap $vent \
-		&& mpv "${*##* }" --really-quiet --force-media-title="${*%%  *}" ; xdotool windowmap $vent
+	hide_win mpv "${*##* }" --really-quiet --force-media-title="${*%%  *}"
 	}
 
 export -f _play
