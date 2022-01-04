@@ -3,17 +3,17 @@
 dep_ck () {
 	for dep in "$@"; do
 		command -v "$dep" 1>/dev/null \
-			|| { printf "$dep not found. Please install it. ($dep no encontrado. Por favor instalalo) .\\n"; exit 2; }
+			|| { printf '%s\n' "$dep not found. Please install it. ($dep no encontrado. Por favor instalalo)"; exit 2; }
 	done
 }
-dep_ck "sed" "xdotool" "curl"  "jq" "youtube-dl" "mpv" "awk" "grep"
+dep_ck "fzf" "sed" "curl" "jq" "mpv" "awk" "grep"
 
 y="\033[1;33m"
 re="\033[0m"
 main_url="https://iptv-org.github.io/iptv/channels.json"
 location='/usr/local/bin/television'
-History=0
-hide_win=1
+# History=0
+# hide_win=1
 menu="fzf --reverse --cycle"
 
 
@@ -39,23 +39,22 @@ $auth curl -sL $url -o $location
 $auth chmod +x $location
 }
 
-
 hide_win () {
 	vent=$(xdotool getactivewindow) \
 		&& xdotool windowunmap $vent
 	"$@"
 	xdotool windowmap $vent
 }
+
 export -f hide_win
+command -v xdotool >/dev/null && export hide=hide_win
 
 case $1 in
 	-es) 
 		a="$(curl -Lsf 'https://www.tdtchannels.com/lists/tv.m3u' | grep -v '#')" 
 		while true; do
 			b="$(echo "$a" | $menu --prompt='television española: ')"
-			[ -z "$b" ] && exit || hide_win mpv --really-quiet "$b"
-
-
+			[ -z "$b" ] && exit || $hide mpv --really-quiet "$b"
 		done
 		;;
 	
@@ -81,7 +80,7 @@ case $1 in
 				| sort | $menu | cut -d' ' -f2 | cut -d'.' -f1)"
 			url=$(grep "$rec.m3u$" /tmp/iptv_categories)
 			[ -z "$rec" ] && exit
-			hide_win mpv --script=./plugins/playlistmanager.lua \
+			$hide mpv --script=./plugins/playlistmanager.lua \
 				--use-filedir-conf=yes "$url"
 		done 
 		;;
@@ -92,7 +91,7 @@ case $1 in
 			selection=$(printf '%s\n' "$url" | column -t -s',' | tr -d '"' | grep '.m3u8$\|live$' \
 				| $menu --with-nth="1..-2" --prompt='television: ')
 			[ -z "$selection" ] && exit \
-				|| hide_win mpv "${selection##* }" --force-media-title="${selection%%  *}"
+				|| $hide mpv "${selection##* }" --force-media-title="${selection%%  *}"
 		done
 		;;
 	-L)
@@ -114,7 +113,7 @@ case $1 in
 		tele=$(command -v television)
 		url="$(curl -sL 'https://raw.githubusercontent.com/khonsaloh/television/master/television')"
 		diff -q "$tele" <(echo "$url") >/dev/null \
-			&& printf '%s\n' "no hay actualizaciones" || update
+		 	&& printf '%s\n' "no hay actualizaciones" || update
 		;;
 	
 	*) [ -n "$1" ] && help ;;
@@ -139,11 +138,11 @@ CHANNELS_LIST=$(curl -sL "$main_url" \
 
 _play() {
 	printf '%s\n' "Fetching channel, please wait..."
-	hide_win mpv "${*##* }" --really-quiet --force-media-title="${*%%  *}"
+	$hide mpv "${*##* }" --really-quiet --force-media-title="${*%%  *}"
 	}
 
 export -f _play
 SHELL="$(command -v bash)"		     
- printf '%s\n' "${CHANNELS_LIST}" | fzf -e -i --reverse --cycle --with-nth="1..-2"\
+printf '%s\n' "${CHANNELS_LIST}" | fzf -e -i --reverse --cycle --with-nth="1..-2"\
            --bind "enter:execute(_play {})"\
            --header="Select channel (press Escape to exit)" -q "${*:-}" 

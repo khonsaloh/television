@@ -1,6 +1,8 @@
 ## Buy me a coffee
 <a href="https://www.paypal.me/60nza10"><img src="https://img.shields.io/badge/don-paypal-blue"></a> 
 
+#### contributors are welcome with jq and json parsing
+
 # television
 
 watch television (iptv) and listen to radio, easy, fast and eficiently
@@ -24,12 +26,10 @@ watch television (iptv) and listen to radio, easy, fast and eficiently
 - grep
 - tr
 - curl
-- xdo
 - jq
-- dmenu
-- youtube-dl
+- fzf
+- xdotool (optional) for swallow window
 
-No need of further explanation on (deps) 
 
 # usage
 
@@ -42,11 +42,9 @@ chmod +x television
 - if -es is passed, It will only give you spanish related channels
 - -r refers to radio stations
 - -l, for list, will let you navegate through a large playlist filtered by category, lang or country
-- and of course -h, --help will show you the same thing as I've typed.
 - the playlistmanager will automaticaly be loaded when launching the script with the -l argument, for bring it up or toggle it, press the key `p` 
 
 # gallery
-<!-- <a href="https://gitlab.com/khonsaloh/television/-/raw/master/capturas/thumb-menu.png"><img src="https://gitlab. com/khonsaloh/television/-/raw/master/capturas/thumb-menu.png"></a> -->
 
 <a href="https://gitlab.com/khonsaloh/television/-/raw/master/capturas/20210227194546.png"><img src='https://gitlab.com/khonsaloh/television/-/raw/master/capturas/20210227194546.png'></a>
 
@@ -54,10 +52,6 @@ chmod +x television
 
 <a href="https://gitlab.com/khonsaloh/television/-/raw/master/capturas/tv-franc.png"><img src='https://gitlab.com/khonsaloh/television/-/raw/master/capturas/tv-franc.png'></a>
 
-<!--![muestra2]('https://gitlab.com/khonsaloh/television/-/raw/master/capturas/20210227194546.png')
-
-
-![muestra3]('https://gitlab.com/khonsaloh/television/-/raw/master/capturas/tv-franc.png') -->
 
 
 # credits
