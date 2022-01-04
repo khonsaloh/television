@@ -6,29 +6,29 @@ dep_ck () {
 			|| { printf "$dep not found. Please install it. ($dep no encontrado. Por favor instalalo) .\\n"; exit 2; }
 	done
 }
-dep_ck "sed" "xdotool" "curl"  "jq" "youtube-dl" "mpv" "dmenu" "awk" "grep"
+dep_ck "sed" "xdotool" "curl"  "jq" "youtube-dl" "mpv" "awk" "grep"
 
 y="\033[1;33m"
 re="\033[0m"
-table=1
-fzf=0
 main_url="https://iptv-org.github.io/iptv/channels.json"
 location='/usr/local/bin/television'
 History=0
-devour=1
+hide_win=1
+menu="fzf --reverse --cycle"
+
 
 # allow custom variables in configuration file
 [ -f "$HOME"/.config/television ] && . "$HOME"/.config/television
 
 help() {
 printf "opciones son:\\n"
-printf '%b' "${y}-es${re}\\tpara canales en español\\n"
-printf '%b' "${y}-r${re}\\tpara radio\\n"
-printf '%b' "${y}-d${re}\\tpara descargar el archivo m3u\\n"
-printf '%b' "${y}-l${re}\\tpara listas de reproduccion, (pulsando p se obtiene un menu)\\n"
-printf '%b' "${y}-le${re}\\tpara listas de reproduccion en español exclusivamente, (pulsando p se obtiene un menu)\\n"
-printf '%b' "${y}-L${re}\\tpara solo obtener el link\\n" 
-printf '%b' "${y}-u${re}\\tpara actualizar script\\n" 
+printf '%b' " ${y}-es${re}\\tpara canales en español\\n"
+printf '%b' " ${y}-r${re}\\tpara radio\\n"
+printf '%b' " ${y}-d${re}\\tpara descargar el archivo m3u\\n"
+printf '%b' " ${y}-l${re}\\tpara listas de reproduccion, (pulsando p se obtiene un menu)\\n"
+printf '%b' " ${y}-e${re}\\tpara canales enfocados en habla hispana\\n"
+printf '%b' " ${y}-L${re}\\tpara solo obtener el link\\n" 
+printf '%b' " ${y}-u${re}\\tpara actualizar script\\n" 
 }
 
 update () {
@@ -40,76 +40,81 @@ $auth chmod +x $location
 }
 
 
+hide_win () {
+	vent=$(xdotool getactivewindow) \
+		&& xdotool windowunmap $vent
+	"$@"
+	xdotool windowmap $vent
+}
+export -f hide_win
+
 case $1 in
 	-es) 
-		a="$(curl -Lsf 'https://www.tdtchannels.com/lists/tv.m3u' | grep -v '#')" \
-			&& vent=$(xdotool getactivewindow) && xdotool windowunmap $vent
+		a="$(curl -Lsf 'https://www.tdtchannels.com/lists/tv.m3u' | grep -v '#')" 
 		while true; do
-			b="$(echo "$a" | dmenu -i -l 30 -sb '#661a1a' -p 'television española')"
-			[ -z "$b" ] && xdotool windowmap $vent && exit || mpv --really-quiet "$b" 
-		done &
-		;; #individuales
+			b="$(echo "$a" | $menu --prompt='television española: ')"
+			[ -z "$b" ] && exit || hide_win mpv --really-quiet "$b"
+
+
+		done
+		;;
 	
 	-r) 
 		a="$(curl -Lsf 'https://www.tdtchannels.com/lists/radio.m3u8' | grep -v '#')"
 		while true; do
-			b="$(echo "$a" | dmenu -i -l 30 -sb '#661a1a' -p 'television española')"
+			b="$(echo "$a" | $menu --prompt='television española: ')"
 				[ -z "$b" ] && exit || mpv --really-quiet "$b" 2>/dev/null
 		done
 		;;
 	
 	-d) 
-		url=$(curl -Lsf 'https://raw.githubusercontent.com/iptv-org/iptv/master/README.md' |
-		awk '/http/' | grep -o -P '(?<=code>).*(?=</code)' | sed 's/<.*//' |
-		dmenu -i -l 30 -sb '#661a1a' -p 'television') && curl -sfL $url -o $PWD/"$(echo $url \
-		| awk -F'/' '{print $NF}')" ;;
+		url=$(curl -Lsf 'https://raw.githubusercontent.com/iptv-org/iptv/master/README.md' \
+		| grep -o -P '(?<=code>).*(?=</code)' | sed 's/<.*//' \
+		| $menu --prompt='television: ') \
+		&& curl -sfL $url -O ;;
 	
 	-l) 
-		curl -Lsf https://raw.githubusercontent.com/iptv-org/iptv/master/README.md | grep 'http' \
+		curl -Lsf https://raw.githubusercontent.com/iptv-org/iptv/master/README.md \
 			| grep -o -P '(?<=code>).*(?=</code)' | sed 's/<.*//' >/tmp/iptv_categories
 		while true; do
 			rec="$(cut -f2- /tmp/iptv_categories | awk -F'/' '{print $(NF-1),$NF}' \
-				| sort | fzf | rev | cut -c5- | cut -d' ' -f1 | rev)"
-			[ -n "$rec" ] && vent=$(xdotool getactivewindow) && xdotool windowunmap $vent
+				| sort | $menu | cut -d' ' -f2 | cut -d'.' -f1)"
 			url=$(grep "$rec.m3u$" /tmp/iptv_categories)
 			[ -z "$rec" ] && exit
-			mpv --script=./plugins/playlistmanager.lua \
+			hide_win mpv --script=./plugins/playlistmanager.lua \
 				--use-filedir-conf=yes "$url"
-			xdotool windowmap $vent
 		done 
 		;;
-	-le)
+	-e)
 		url=$(curl -Lsf  'https://www.tdtchannels.com/lists/tv.w3u' \
 			| jq -r '["CANAL","ENLACE"], ["----","------"], (.groups[].stations[] | [.name, .url]) | @csv')
-		[ -n "$url" ] && vent=$(xdotool getactivewindow) && xdotool windowunmap $vent
 		while true; do
-			menu=$(printf '%s' "$url\n" | column -t -s',' | tr -d '"' \
-				| dmenu -i -l 20 -p television -sb '#661a1a' -fn 'mono' \
-				| awk '{print $NF}')
-			[ -z "$menu" ] && xdotool windowmap $vent && exit \
-				|| mpv "$menu"
-
+			selection=$(printf '%s\n' "$url" | column -t -s',' | tr -d '"' | grep '.m3u8$\|live$' \
+				| $menu --with-nth="1..-2" --prompt='television: ')
+			[ -z "$selection" ] && exit \
+				|| hide_win mpv "${selection##* }" --force-media-title="${selection%%  *}"
 		done
 		;;
 	-L)
 
 		url=$(curl -Lsf 'https://iptv-org.github.io/iptv/channels.json' \
 			| jq -r '["CANAL","ENLACE"], ["----","------"], (.[] | [.name, .url]) | @csv')
-		printf '%b' "$url\n" | column -t -s',' | tr -d '"' \
-			| fzf --prompt='elige enlace: ' --with-nth="1..-2"| awk '{print $NF}'
+		printf '%b\n' "$url" | column -t -s',' | tr -d '"' \
+			| $menu --prompt='elige enlace: ' --with-nth="1..-2"| awk '{print $NF}'
 
 		;;
 
 	 -G) 
 		a="$(curl -Lsf https://iptv-org.github.io/iptv/channels.json \
 	 	| jq -r '["CANAL","ENLACE"], ["----","------"], (.[] | [.name, .url]) | @csv' \
-		| dmenu -i -l 30 | awk '{print $NF}')"
+		| $menu  | awk '{print $NF}')"
 		[ -n "$a" ] && ffmpeg -i "$a" -c copy /tmp/out.ts; mpv /tmp/out.ts
 		;;
 	 -u) 
 		tele=$(command -v television)
 		url="$(curl -sL 'https://raw.githubusercontent.com/khonsaloh/television/master/television')"
-		diff -q "$tele" <(echo "$url") >/dev/null && printf "no hay actualizaciones\\n" || update
+		diff -q "$tele" <(echo "$url") >/dev/null \
+			&& printf '%s\n' "no hay actualizaciones" || update
 		;;
 	
 	*) [ -n "$1" ] && help ;;
@@ -120,7 +125,7 @@ esac
 
 
 CHANNELS_LIST=$(curl -sL "$main_url" \
-	| jq -r '.[] | "\(.name) \t \(.category // "N/A") \t \(.languages|.[0].name // "N/A") \t \(.countries|.[0].name // "N/A") \t \(.url)"' |\
+	| jq -r '.[] | "\(.name) \t \(.categories[].name // "N/A") \t \(.languages|.[0].name // "N/A") \t \(.countries|.[0].name // "N/A") \t \(.url)"' |\
 	                gawk -v max="${COLUMNS:-80}" 'BEGIN { RS="\n"; FS=" \t " }
                     {
 	               name = substr(gensub(/[0-9]+\.\s*(.*)/, "\\1", "g", $1),0,max/4)
@@ -130,17 +135,8 @@ CHANNELS_LIST=$(curl -sL "$main_url" \
 	               channelUrl = substr(gensub(/\s+> (.*)/, "\\1", "g", $5),0)
 	               print name "\t|" category "\t|" languages "\t|" countries "\t" channelUrl
 	              }' | column -t -s $'\t' \
-
 )
 
-hide_win () {
-	vent=$(xdotool getactivewindow) \
-		&& xdotool windowunmap $vent
-	$@
-	xdotool windowmap $vent
-}
-
-export -f hide_win
 _play() {
 	printf '%s\n' "Fetching channel, please wait..."
 	hide_win mpv "${*##* }" --really-quiet --force-media-title="${*%%  *}"
