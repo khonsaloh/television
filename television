@@ -50,7 +50,7 @@ command -v xdotool >/dev/null && export hide=hide_win
 case $1 in
 	-r)
 		url=$(curl -Lsf  'https://www.tdtchannels.com/lists/radio.w3u' \
-			| jq -r '["CANAL","ENLACE"], ["----","------"], (.groups[].stations[] | [.name, .url]) | @csv')
+			| jq -r '(.groups[].stations[] | [.name, .url]) | @csv')
 		while :; do
 			selection=$(printf '%s\n' "$url" | column -t -s',' | tr -d '"' \
 				| $menu --with-nth="1..-2" --prompt='radio: ')
@@ -80,7 +80,7 @@ case $1 in
 		;;
 	-e)
 		url=$(curl -Lsf  'https://www.tdtchannels.com/lists/tv.w3u' \
-			| jq -r '["CANAL","ENLACE"], ["----","------"], (.groups[].stations[] | [.name, .url]) | @csv')
+			| jq -r '(.groups[].stations[] | [.name, .url]) | @csv')
 		while :; do
 			selection=$(printf '%s\n' "$url" | column -t -s',' | tr -d '"' | grep '.m3u8$\|live$' \
 				| $menu --with-nth="1..-2" --prompt='television: ')
@@ -123,16 +123,16 @@ CHANNELS_LIST=$(curl -sL "$main_url" \
 )
 
 _playvid() {
-	printf '%s\n' "Fetching channel, please wait..."
+	printf '%s\n' "Fetching channel..."
 	$hide mpv "${*##* }" --really-quiet --force-media-title="${*%%  *}"
 	}
  
 _detachplayer() {
- 	printf '%s\n' "Fetching channel, please wait..."
+ 	printf '%s\n' "Fetching channel..."
  	{ setsid -f mpv "${*##* }" --really-quiet --force-media-title="${*%%  *}" & }
 }
 _onlyaudio() {
-	printf '%s\n' "Fetching channel, please wait..."
+	printf '%s\n' "Fetching channel..."
 	mpv "${*##* }" --no-video --really-quiet --force-media-title="${*%%  *}"
 	}
 _getlink() {
