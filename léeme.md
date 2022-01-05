@@ -13,13 +13,11 @@ ve la televisión (iptv, a través de red) y escucha la radio de manera rápida,
 3. También permite el acceso rápido a emisoras españolas
 4. contenido no filtrado.
 5. escrito en el standard posix, lo que favorece a su portabilidad entre sistemas derivados de UNIX (gnu/linux, macOS, freebsd... por nombrar a algunos)
-6. aunque el gestor de listas de reproduccion está escrito en el lenguaje lua (luna del portugués) no se requiere que estea instalado en el sistema
-7. no se crearán logs con la salida de mpv, esto podría ser útil en caso de depuración pero la mayoría lo encontrará incómodo.
 
 ## dependencias:
 ### se requiere que las siguientes utilidades estean instaladas en el equipo:
 
-- mpv (compilado con suporte para lua, que suele ser la norma)
+- mpv
 - awk (lenguaje de programacion)
 - grep ( filtra por patrones )
 - sed (para filtrar por expresiones regulares)
@@ -37,10 +35,9 @@ chmod +x television
 ```
 
 - si no se le pasa ningún parámetro, el guión de comandos lanzará un menú gráfico con los canales por defecto
-- con -es, tan solo dará resultados de canales relacionados con el español
+- con -e, tan solo dará resultados de canales relacionados con el español
 - -r buscara exclusivamente emisoras de radio ubicadas en españa 
 - -l, de lista, te dejará navegar por una larga lista organizada en categorías, idiomas o países
-- y por supuesto -h, --help te mostrará esto pero más compendiado.
 - el gestor de lista de reproducción se cargará si se le pasa el parámetro -l, para lanzar u ocultar el menú debe presionarse la tecla `p`
 
 # galería

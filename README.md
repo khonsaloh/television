@@ -13,15 +13,12 @@ watch television (iptv) and listen to radio, easy, fast and eficiently
 2. It is legal and free
 3. Fast access to spanish radio stations as a spaniard culture symbolism
 4. rated r content did not was removed! be aware!
-5. posix syntax which helps with portability (any shell running on a UNIX based OS can handle this)
-6. even the playlist manager which is written in lua, doesn't force you to install the interpreter for this language
-7. No log will be created, maybe it would be smarter to redirect the stderr to a file for the sake of error awareness, but i've found this a pain. No one thinks the same, you can suppress the `--really-quiet` passed to `mpv`
 
 ## [documentación en español](./léeme.md)
 
 ## dependencies:
 
-- mpv (compiled with lua support, 99.999% of the time is the default)
+- mpv
 - awk
 - grep
 - tr
@@ -39,7 +36,7 @@ chmod +x television
 ```
 
 - if no flag is passed, the script will prompt you with a general selection of tv channels to choose from.
-- if -es is passed, It will only give you spanish related channels
+- if -e is passed, It will only give you spanish related channels
 - -r refers to radio stations
 - -l, for list, will let you navegate through a large playlist filtered by category, lang or country
 - the playlistmanager will automaticaly be loaded when launching the script with the -l argument, for bring it up or toggle it, press the key `p` 

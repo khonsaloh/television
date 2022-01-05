@@ -2,8 +2,8 @@
 
 dep_ck () {
 	for dep in "$@"; do
-		command -v "$dep" 1>/dev/null \
-			|| { printf '%s\n' "$dep not found. Please install it. ($dep no encontrado. Por favor instalalo)"; exit 2; }
+		command -v "$dep" >/dev/null \
+			|| { printf '%s\n' "$dep not found. Please install it."; exit 2; }
 	done
 }
 dep_ck "fzf" "sed" "curl" "jq" "mpv" "awk" "grep"
@@ -11,32 +11,30 @@ dep_ck "fzf" "sed" "curl" "jq" "mpv" "awk" "grep"
 y="\033[1;33m"
 re="\033[0m"
 main_url="https://iptv-org.github.io/iptv/channels.json"
-location='/usr/local/bin/television'
+location='/usr/local/bin'
 # History=0
 # hide_win=1
-menu="fzf --reverse --cycle"
+menu="fzf -e -i --reverse --cycle"
 
 
 # allow custom variables in configuration file
 [ -f "$HOME"/.config/television ] && . "$HOME"/.config/television
 
 help() {
-printf "opciones son:\\n"
-printf '%b' " ${y}-es${re}\\tpara canales en español\\n"
-printf '%b' " ${y}-r${re}\\tpara radio\\n"
-printf '%b' " ${y}-d${re}\\tpara descargar el archivo m3u\\n"
-printf '%b' " ${y}-l${re}\\tpara listas de reproduccion, (pulsando p se obtiene un menu)\\n"
-printf '%b' " ${y}-e${re}\\tpara canales enfocados en habla hispana\\n"
-printf '%b' " ${y}-L${re}\\tpara solo obtener el link\\n" 
-printf '%b' " ${y}-u${re}\\tpara actualizar script\\n" 
+printf '%s\n' "options for $0:"
+printf '%b\n' " ${y}-r${re}\\tfor radio"
+printf '%b\n' " ${y}-d${re}\\tfor download the m3u file"
+printf '%b\n' " ${y}-l${re}\\tfor playlists, (pressing p will give you a menu)"
+printf '%b\n' " ${y}-e${re}\\tfor channels focused on spanish language"
+printf '%b\n' " ${y}-u${re}\\tfor update this script" 
 }
 
 update () {
 url='https://raw.githubusercontent.com/khonsaloh/television/master/television'
 command -v doas >/dev/null && auth=doas
 command -v sudo >/dev/null && auth=sudo
-$auth curl -sL $url -o $location
-$auth chmod +x $location
+$auth curl --progress-bar -sL $url -o $location/"${url##*/}"
+$auth chmod +x $location/"${url##*/}"
 }
 
 hide_win () {
@@ -50,19 +48,15 @@ export -f hide_win
 command -v xdotool >/dev/null && export hide=hide_win
 
 case $1 in
-	-es) 
-		a="$(curl -Lsf 'https://www.tdtchannels.com/lists/tv.m3u' | grep -v '#')" 
-		while true; do
-			b="$(echo "$a" | $menu --prompt='television española: ')"
-			[ -z "$b" ] && exit || $hide mpv --really-quiet "$b"
-		done
-		;;
-	
-	-r) 
-		a="$(curl -Lsf 'https://www.tdtchannels.com/lists/radio.m3u8' | grep -v '#')"
-		while true; do
-			b="$(echo "$a" | $menu --prompt='television española: ')"
-				[ -z "$b" ] && exit || mpv --really-quiet "$b" 2>/dev/null
+	-r)
+		url=$(curl -Lsf  'https://www.tdtchannels.com/lists/radio.w3u' \
+			| jq -r '["CANAL","ENLACE"], ["----","------"], (.groups[].stations[] | [.name, .url]) | @csv')
+		while :; do
+			selection=$(printf '%s\n' "$url" | column -t -s',' | tr -d '"' \
+				| $menu --with-nth="1..-2" --prompt='radio: ')
+			o_url=$(echo "$selection" | awk '{print $NF}')
+			[ -z "$selection" ] && exit \
+				||  mpv $o_url --force-media-title="${selection%%  *}"
 		done
 		;;
 	
@@ -75,7 +69,7 @@ case $1 in
 	-l) 
 		curl -Lsf https://raw.githubusercontent.com/iptv-org/iptv/master/README.md \
 			| grep -o -P '(?<=code>).*(?=</code)' | sed 's/<.*//' >/tmp/iptv_categories
-		while true; do
+		while :; do
 			rec="$(cut -f2- /tmp/iptv_categories | awk -F'/' '{print $(NF-1),$NF}' \
 				| sort | $menu | cut -d' ' -f2 | cut -d'.' -f1)"
 			url=$(grep "$rec.m3u$" /tmp/iptv_categories)
@@ -87,33 +81,25 @@ case $1 in
 	-e)
 		url=$(curl -Lsf  'https://www.tdtchannels.com/lists/tv.w3u' \
 			| jq -r '["CANAL","ENLACE"], ["----","------"], (.groups[].stations[] | [.name, .url]) | @csv')
-		while true; do
+		while :; do
 			selection=$(printf '%s\n' "$url" | column -t -s',' | tr -d '"' | grep '.m3u8$\|live$' \
 				| $menu --with-nth="1..-2" --prompt='television: ')
 			[ -z "$selection" ] && exit \
 				|| $hide mpv "${selection##* }" --force-media-title="${selection%%  *}"
 		done
 		;;
-	-L)
 
-		url=$(curl -Lsf 'https://iptv-org.github.io/iptv/channels.json' \
-			| jq -r '["CANAL","ENLACE"], ["----","------"], (.[] | [.name, .url]) | @csv')
-		printf '%b\n' "$url" | column -t -s',' | tr -d '"' \
-			| $menu --prompt='elige enlace: ' --with-nth="1..-2"| awk '{print $NF}'
-
-		;;
-
-	 -G) 
-		a="$(curl -Lsf https://iptv-org.github.io/iptv/channels.json \
-	 	| jq -r '["CANAL","ENLACE"], ["----","------"], (.[] | [.name, .url]) | @csv' \
-		| $menu  | awk '{print $NF}')"
-		[ -n "$a" ] && ffmpeg -i "$a" -c copy /tmp/out.ts; mpv /tmp/out.ts
-		;;
+	 # -G) 
+		# a="$(curl -Lsf https://iptv-org.github.io/iptv/channels.json \
+	 # 	| jq -r '["CANAL","ENLACE"], ["----","------"], (.[] | [.name, .url]) | @csv' \
+		# | $menu  | awk '{print $NF}')"
+		# [ -n "$a" ] && ffmpeg -i "$a" -c copy /tmp/out.ts; mpv /tmp/out.ts
+		# ;;
 	 -u) 
 		tele=$(command -v television)
 		url="$(curl -sL 'https://raw.githubusercontent.com/khonsaloh/television/master/television')"
 		diff -q "$tele" <(echo "$url") >/dev/null \
-		 	&& printf '%s\n' "no hay actualizaciones" || update
+		 	&& printf '%s\n' "there is no updates" || update
 		;;
 	
 	*) [ -n "$1" ] && help ;;
@@ -136,13 +122,31 @@ CHANNELS_LIST=$(curl -sL "$main_url" \
 	              }' | column -t -s $'\t' \
 )
 
-_play() {
+_playvid() {
 	printf '%s\n' "Fetching channel, please wait..."
 	$hide mpv "${*##* }" --really-quiet --force-media-title="${*%%  *}"
 	}
+ 
+_detachplayer() {
+ 	printf '%s\n' "Fetching channel, please wait..."
+ 	{ setsid -f mpv "${*##* }" --really-quiet --force-media-title="${*%%  *}" & }
+}
+_onlyaudio() {
+	printf '%s\n' "Fetching channel, please wait..."
+	mpv "${*##* }" --no-video --really-quiet --force-media-title="${*%%  *}"
+	}
+_getlink() {
+	echo "${*##* }"; notify-send "${*##* }"
+	}
 
-export -f _play
+export -f _playvid
+export -f _onlyaudio
+export -f _getlink
+export -f _detachplayer
 SHELL="$(command -v bash)"		     
-printf '%s\n' "${CHANNELS_LIST}" | fzf -e -i --reverse --cycle --with-nth="1..-2"\
-           --bind "enter:execute(_play {})"\
+printf '%s\n' "${CHANNELS_LIST}" | $menu --with-nth="1..-2"\
+           --bind "enter:execute(_playvid {})"\
+           --bind "alt-a:execute(_onlyaudio {})"\
+           --bind "alt-l:execute(_getlink {})"\
+           --bind "alt-d:execute(_detachplayer {})"\
            --header="Select channel (press Escape to exit)" -q "${*:-}" 
