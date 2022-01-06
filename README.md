@@ -6,7 +6,7 @@
 
 ##
 <p align="center">
-<img src="./assets/sample.gif" alt="sample" width="500px">
+<img src="./assets/sample.gif" alt="sample" width="100%">>
 </p>
 
 # television
