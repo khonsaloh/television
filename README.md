@@ -3,6 +3,12 @@
 
 #### contributors are welcome with jq and json parsing
 
+
+##
+<p align="center">
+<img src="./assets/sample.gif" alt="sample" width="500px">
+</p>
+
 # television
 
 watch television (iptv) and listen to radio, easy, fast and eficiently
@@ -40,16 +46,6 @@ chmod +x television
 - -r refers to radio stations
 - -l, for list, will let you navegate through a large playlist filtered by category, lang or country
 - the playlistmanager will automaticaly be loaded when launching the script with the -l argument, for bring it up or toggle it, press the key `p` 
-
-# gallery
-
-<a href="https://gitlab.com/khonsaloh/television/-/raw/master/capturas/20210227194546.png"><img src='https://gitlab.com/khonsaloh/television/-/raw/master/capturas/20210227194546.png'></a>
-
-<a href="https://gitlab.com/khonsaloh/television/-/raw/master/capturas/20210227194343.png "><img src='https://gitlab.com/khonsaloh/television/-/raw/master/capturas/20210227194343.png '></a>
-
-<a href="https://gitlab.com/khonsaloh/television/-/raw/master/capturas/tv-franc.png"><img src='https://gitlab.com/khonsaloh/television/-/raw/master/capturas/tv-franc.png'></a>
-
-
 
 # credits
 
