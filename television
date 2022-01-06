@@ -32,7 +32,6 @@ help() {
 printf '%s\n' "options for $0:"
 printf '%b\n' " ${y}-r${re}\\tfor radio"
 printf '%b\n' " ${y}-d${re}\\tfor download the m3u file"
-printf '%b\n' " ${y}-l${re}\\tfor playlists, (pressing p will give you a menu)"
 printf '%b\n' " ${y}-e${re}\\tfor channels focused on spanish language"
 printf '%b\n' " ${y}-u${re}\\tfor update this script" 
 }
@@ -74,18 +73,6 @@ case $1 in
 		| $menu --prompt='television: ') \
 		&& curl -sfL $url -O ;;
 	
-	-l) 
-		curl -Lsf https://raw.githubusercontent.com/iptv-org/iptv/master/README.md \
-			| grep -o -P '(?<=code>).*(?=</code)' | sed 's/<.*//' >/tmp/iptv_categories
-		while :; do
-			rec="$(cut -f2- /tmp/iptv_categories | awk -F'/' '{print $(NF-1),$NF}' \
-				| sort | $menu | cut -d' ' -f2 | cut -d'.' -f1)"
-			url=$(grep "$rec.m3u$" /tmp/iptv_categories)
-			[ -z "$rec" ] && exit
-			$hide mpv --script=./plugins/playlistmanager.lua \
-				--use-filedir-conf=yes "$url"
-		done 
-		;;
 	-e)
 		url=$(curl -Lsf  'https://www.tdtchannels.com/lists/tv.w3u' \
 			| jq -r '(.groups[].stations[] | [.name, .url]) | @csv')
