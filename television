@@ -82,7 +82,7 @@ case $1 in
 				| sort | $menu | cut -d' ' -f2 | cut -d'.' -f1)"
 			url=$(grep "$rec.m3u$" /tmp/iptv_categories)
 			[ -z "$rec" ] && exit
-			$hide mpv --script=./plugins/playlistmanager.lua \
+			$hide mpv --script=./plugins/playlist/playlistmanager.lua \
 				--use-filedir-conf=yes "$url"
 		done 
 		;;
