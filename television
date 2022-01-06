@@ -83,13 +83,6 @@ case $1 in
 				|| $hide mpv "${selection##* }" --force-media-title="${selection%%  *}"
 		done
 		;;
-
-	 # -G) 
-		# a="$(curl -Lsf https://iptv-org.github.io/iptv/channels.json \
-	 # 	| jq -r '["CANAL","ENLACE"], ["----","------"], (.[] | [.name, .url]) | @csv' \
-		# | $menu  | awk '{print $NF}')"
-		# [ -n "$a" ] && ffmpeg -i "$a" -c copy /tmp/out.ts; mpv /tmp/out.ts
-		# ;;
 	 -u) 
 		update
 		;;
