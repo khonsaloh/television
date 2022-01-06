@@ -7,4 +7,5 @@
 !.github/*
 !.gitignore
 !plugins/*
+!plugins/*/*
 !/assets

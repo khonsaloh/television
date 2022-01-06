@@ -1,0 +1,3 @@
+[submodule "plugins/playlist"]
+	path = plugins/playlist
+	url = https://github.com/jonniek/mpv-playlistmanager.git

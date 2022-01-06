@@ -38,7 +38,7 @@ chmod +x television
 - con -e, tan solo dará resultados de canales relacionados con el español
 - -r buscara exclusivamente emisoras de radio ubicadas en españa 
 - -l, de lista, te dejará navegar por una larga lista organizada en categorías, idiomas o países
-- el gestor de lista de reproducción se cargará si se le pasa el parámetro -l, para lanzar u ocultar el menú debe presionarse la tecla `p`
+- el gestor de lista de reproducción se cargará si se le pasa el parámetro -l, para lanzar u ocultar el menú debe presionarse la tecla `shift-enter`
 
 # galería
 

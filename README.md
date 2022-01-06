@@ -45,7 +45,7 @@ chmod +x television
 - if -e is passed, It will only give you spanish related channels
 - -r refers to radio stations
 - -l, for list, will let you navegate through a large playlist filtered by category, lang or country
-- the playlistmanager will automaticaly be loaded when launching the script with the -l argument, for bring it up or toggle it, press the key `p` 
+- the playlistmanager will automaticaly be loaded when launching the script with the -l argument, for bring it up or toggle it, press the key `shift-enter` 
 
 # credits
 
