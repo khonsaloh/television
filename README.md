@@ -3,7 +3,6 @@
 
 #### contributors are welcome with jq and json parsing
 
-
 ##
 <p align="center">
 <img src="./assets/sample.gif" alt="sample" width="100%">>
@@ -25,9 +24,7 @@ watch television (iptv) and listen to radio, easy, fast and eficiently
 ## dependencies:
 
 - mpv
-- awk
-- grep
-- tr
+- gawk
 - curl
 - jq
 - fzf

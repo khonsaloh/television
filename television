@@ -21,6 +21,8 @@ menu="fzf -e -i --reverse --cycle"
 
 # History=0
 # hide_win=1
+: "${player:=mpv}"
+: "${player_options:=mpv}"
 
 #fzf bindings
 : "${playvid:=enter}"
@@ -58,12 +60,14 @@ command -v xdotool >/dev/null && export hide=hide_win
 case $1 in
 	-r)
 		url=$(curl -Lsf  'https://www.tdtchannels.com/lists/radio.w3u' \
-			| jq -r '(.groups[].stations[] | [.name, .url]) | @csv')
+			| jq -r '.groups[].stations[] | "\(.name), \(.url)"')
 		while :; do
-			selection=$(printf '%s\n' "$url" | column -t -s',' | tr -d '"' \
-				| $menu --with-nth="1..-2" --prompt='radio: ') || exit
-			o_url=$(echo "$selection" | awk '{print $NF}')	
-			echo $selection | awk -F'\t' '{print $1}'; mpv $o_url --force-media-title="${selection%%  *}"
+			selection=$(printf '%s\n' "$url" \
+				| $menu --with-nth="1..-2" --prompt='radio: ')
+			[ -z "$selection" ] && tput cnorm && exit
+			o_url="${selection##* }"	
+			tput civis; echo "${selection%%,*}"
+			mpv $o_url --force-media-title="${selection%%  *}"
 		done
 		;;
 	
@@ -75,12 +79,12 @@ case $1 in
 	
 	-e)
 		url=$(curl -Lsf  'https://www.tdtchannels.com/lists/tv.w3u' \
-			| jq -r '(.groups[].stations[] | [.name, .url]) | @csv')
+			| jq -r '.groups[].stations[] | "\(.name), \(.url)"')
 		while :; do
-			selection=$(printf '%s\n' "$url" | column -t -s',' | tr -d '"' | grep '.m3u8$\|live$' \
+			selection=$(printf '%s\n' "$url" \
 				| $menu --with-nth="1..-2" --prompt='television: ')
 			[ -z "$selection" ] && exit \
-				|| $hide mpv "${selection##* }" --force-media-title="${selection%%  *}"
+				|| $hide mpv "${selection##* }" --force-media-title="${selection%%,*}"
 		done
 		;;
 	 -u) 
@@ -92,8 +96,11 @@ esac
 
 [ $* ] && exit
 
-CHANNELS_LIST=$(curl -sL "$main_url" \
-	| jq -r '.[] | "\(.name) \t \(.categories[].name // "N/A") \t \(.languages|.[0].name // "N/A") \t \(.countries|.[0].name // "N/A") \t \(.url)"' \
+channel_file=/tmp/channel_file.json #write file to ram for better speed during the session
+
+[ ! -f $channel_file ] && curl -sL "$main_url" > $channel_file
+
+CHANNELS_LIST=$(jq -r '.[] | "\(.name) \t \(.categories[].name // "N/A") \t \(.languages|.[0].name // "N/A") \t \(.countries|.[0].name // "N/A") \t \(.url)"' $channel_file \
 	                | gawk -v max="${COLUMNS:-80}" 'BEGIN { RS="\n"; FS=" \t " }
                     {
 	               name = substr(gensub(/[0-9]+\.\s*(.*)/, "\\1", "g", $1),0,max/4)
@@ -102,8 +109,7 @@ CHANNELS_LIST=$(curl -sL "$main_url" \
 	               countries = substr(gensub(/\s+> (.*)/, "\\1", "g", $4),0,70)
 	               channelUrl = substr(gensub(/\s+> (.*)/, "\\1", "g", $5),0)
 	               print name "\t|" category "\t|" languages "\t|" countries "\t" channelUrl
-	              }' | column -t -s $'\t' \
-)
+	              }' | column -t -s $'\t')
 
 _playvid() {
 	printf '%s\n' "Fetching channel..."
@@ -116,8 +122,9 @@ _detachplayer() {
 }
 _onlyaudio() {
 	printf '%s\n' "Fetching channel..."
-	printf '%s\n' "${*%%  *}"
+	tput civis; printf '%s\n' "${*%%  *}"
 	mpv "${*##* }" --no-video --really-quiet --force-media-title="${*%%  *}"
+	tput cnorm
 	}
 _getlink() {
 	echo "${*##* }"; command -v notify-send >/dev/null && notify-send "${*##* }"

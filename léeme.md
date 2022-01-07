@@ -1,4 +1,4 @@
-## Un café siempre es bienvenido
+## acepto donaciones
 <a href="https://www.paypal.me/60nza10"><img src="https://img.shields.io/badge/don-paypal-blue"></a> 
 
 # television
@@ -18,12 +18,9 @@ ve la televisión (iptv, a través de red) y escucha la radio de manera rápida,
 ### se requiere que las siguientes utilidades estean instaladas en el equipo:
 
 - mpv
-- awk (lenguaje de programacion)
-- grep ( filtra por patrones )
-- sed (para filtrar por expresiones regulares)
-- tr ( traductor de characteres)
-- curl (cliente que soporta varios protocolos web)
-- jq (parseador de json)
+- gawk
+- curl
+- jq
 - fzf
 - xdotool (opcional) para ocultar ventana de fondo
 
@@ -33,7 +30,6 @@ ve la televisión (iptv, a través de red) y escucha la radio de manera rápida,
 ```sh
 chmod +x television
 ```
-
 - si no se le pasa ningún parámetro, el guión de comandos lanzará un menú gráfico con los canales por defecto
 - con -e, tan solo dará resultados de canales relacionados con el español
 - -r buscara exclusivamente emisoras de radio ubicadas en españa 
@@ -41,7 +37,6 @@ chmod +x television
 - el gestor de lista de reproducción se cargará si se le pasa el parámetro -l, para lanzar u ocultar el menú debe presionarse la tecla `shift-enter`
 
 # galería
-
 
 <a href="https://gitlab.com/khonsaloh/television/-/raw/master/capturas/20210227194546.png"><img src='https://gitlab.com/khonsaloh/television/-/raw/master/capturas/20210227194546.png'></a>
 
