@@ -33,8 +33,6 @@ chmod +x television
 - si no se le pasa ningún parámetro, el guión de comandos lanzará un menú gráfico con los canales por defecto
 - con -e, tan solo dará resultados de canales relacionados con el español
 - -r buscara exclusivamente emisoras de radio ubicadas en españa 
-- -l, de lista, te dejará navegar por una larga lista organizada en categorías, idiomas o países
-- el gestor de lista de reproducción se cargará si se le pasa el parámetro -l, para lanzar u ocultar el menú debe presionarse la tecla `shift-enter`
 
 # galería
 
