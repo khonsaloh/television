@@ -23,18 +23,21 @@ menu="fzf -e -i --reverse --cycle"
 # hide_win=1
 : "${player:=mpv}"
 : "${player_options:=mpv}"
+export favs_file=~/.cache/television_favs
 
 #fzf bindings
 : "${playvid:=enter}"
 : "${detachplayer:=alt-d}"
 : "${onlyaudio:=alt-a}"
 : "${getlink:=alt-l}"
+: "${favschan:=alt-f}"
 
 help() {
 printf '%s\n' "options for $0:"
 printf '%b\n' " ${y}-r${re}\\tfor radio"
 printf '%b\n' " ${y}-d${re}\\tfor download the m3u file"
 printf '%b\n' " ${y}-e${re}\\tfor channels focused on spanish language"
+printf '%b\n' " ${y}-f${re}\\tto choose from favorites" 
 printf '%b\n' " ${y}-u${re}\\tfor update this script" 
 }
 update () {
@@ -61,13 +64,12 @@ case $1 in
 	-r)
 		url=$(curl -Lsf  'https://www.tdtchannels.com/lists/radio.w3u' \
 			| jq -r '.groups[].stations[] | "\(.name), \(.url)"')
-		while :; do
+		while [ -n "$url" ]; do
 			selection=$(printf '%s\n' "$url" \
 				| $menu --with-nth="1..-2" --prompt='radio: ')
 			[ -z "$selection" ] && tput cnorm && exit
-			o_url="${selection##* }"	
 			tput civis; echo "${selection%%,*}"
-			mpv $o_url --force-media-title="${selection%%  *}"
+			mpv "${selection##* }" --force-media-title="${selection%%  *}"
 		done
 		;;
 	
@@ -77,10 +79,17 @@ case $1 in
 		| $menu --prompt='television: ') \
 		&& curl -sfL $url -O ;;
 	
+	-f)
+		while [ -f $favs_file ]; do
+		urls=$($menu --with-nth="1..-2" < $favs_file )
+			[ -z "$urls" ] && exit \
+				|| $hide mpv "${urls##* }" --force-media-title="${urls%%,*}"
+		done
+		;;
 	-e)
 		url=$(curl -Lsf  'https://www.tdtchannels.com/lists/tv.w3u' \
 			| jq -r '.groups[].stations[] | "\(.name), \(.url)"')
-		while :; do
+		while [ -n "$url" ]; do
 			selection=$(printf '%s\n' "$url" \
 				| $menu --with-nth="1..-2" --prompt='television: ')
 			[ -z "$selection" ] && exit \
@@ -127,18 +136,25 @@ _onlyaudio() {
 	mpv "${*##* }" --no-video --really-quiet --force-media-title="${*%%  *}"
 	tput cnorm
 	}
+
 _getlink() {
 	echo "${*##* }"; command -v notify-send >/dev/null && notify-send "${*##* }"
 	}
+
+_favchannels () {
+	echo "$@" >> $favs_file
+ }
 
 export -f _playvid
 export -f _onlyaudio
 export -f _getlink
 export -f _detachplayer
+export -f _favchannels
 SHELL="$(command -v bash)"		     
 printf '%s\n' "${CHANNELS_LIST}" | $menu --with-nth="1..-2" \
 	--bind "$playvid:execute(_playvid {})" \
 	--bind "$onlyaudio:execute(_onlyaudio {})" \
 	--bind "$getlink:execute(_getlink {})" \
 	--bind "$detachplayer:execute(_detachplayer {})" \
+	--bind "$favschan:execute(_favchannels {})" \
 	--header="Select channel (press Escape to exit)" -q "${*:-}" 
