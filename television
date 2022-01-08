@@ -83,7 +83,7 @@ case $1 in
 		while [ -f $favs_file ]; do
 		urls=$($menu --with-nth="1..-2" < $favs_file )
 			[ -z "$urls" ] && exit \
-				|| $hide mpv "${urls##* }" --force-media-title="${urls%%,*}"
+				|| $hide mpv "${urls##* }" --force-media-title="${urls%%  *}"
 		done
 		;;
 	-e)

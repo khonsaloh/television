@@ -1,0 +1,8 @@
+
+#fzf bindings
+# : "${playvid:=enter}"
+# : "${detachplayer:=alt-d}"
+# : "${onlyaudio:=alt-a}"
+# : "${getlink:=alt-l}"
+# : "${favschan:=alt-f}"
+
