@@ -21,8 +21,8 @@ menu="fzf -e -i --reverse --cycle"
 
 # History=0
 # hide_win=1
-: "${player:=mpv}"
-: "${player_options:=mpv}"
+# : "${player:=mpv}"
+# : "${player_options:=mpv}"
 export favs_file=~/.cache/television_favs
 
 #fzf bindings
@@ -64,7 +64,7 @@ case $1 in
 	-r)
 		url=$(curl -Lsf  'https://www.tdtchannels.com/lists/radio.w3u' \
 			| jq -r '.groups[].stations[] | "\(.name), \(.url)"')
-		while [ -n "$url" ]; do
+		while [ "$url" ]; do
 			selection=$(printf '%s\n' "$url" \
 				| $menu --with-nth="1..-2" --prompt='radio: ')
 			[ -z "$selection" ] && tput cnorm && exit
@@ -75,7 +75,7 @@ case $1 in
 	
 	-d) 
 		url=$(curl -Lsf 'https://raw.githubusercontent.com/iptv-org/iptv/master/README.md' \
-		| grep -o -P '(?<=code>).*(?=</code)' | sed 's/<.*//' \
+		| grep -o -P '(?<=code>).*(?=</code)' \
 		| $menu --prompt='television: ') \
 		&& curl -sfL $url -O ;;
 	
@@ -89,7 +89,7 @@ case $1 in
 	-e)
 		url=$(curl -Lsf  'https://www.tdtchannels.com/lists/tv.w3u' \
 			| jq -r '.groups[].stations[] | "\(.name), \(.url)"')
-		while [ -n "$url" ]; do
+		while [ "$url" ]; do
 			selection=$(printf '%s\n' "$url" \
 				| $menu --with-nth="1..-2" --prompt='television: ')
 			[ -z "$selection" ] && exit \
