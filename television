@@ -19,7 +19,7 @@ menu="fzf -e -i --reverse --cycle"
 # allow custom variables in configuration file
 [ -f "$TELE_CONFIG" ] && . "$TELE_CONFIG"
 
-# History=0
+# History=0 dont see the point of (dis)allow history
 # hide_win=1
 # : "${player:=mpv}"
 # : "${player_options:=mpv}"
@@ -38,6 +38,7 @@ printf '%b\n' " ${y}-r${re}\\tfor radio"
 printf '%b\n' " ${y}-d${re}\\tfor download the m3u file"
 printf '%b\n' " ${y}-e${re}\\tfor channels focused on spanish language"
 printf '%b\n' " ${y}-f${re}\\tto choose from favorites" 
+printf '%b\n' " ${y}-E${re}\\tto edit the favorites file" #delete stuff principaly
 printf '%b\n' " ${y}-u${re}\\tfor update this script" 
 }
 update () {
@@ -75,7 +76,7 @@ case $1 in
 	
 	-d) 
 		url=$(curl -Lsf 'https://raw.githubusercontent.com/iptv-org/iptv/master/README.md' \
-		| grep -o -P '(?<=code>).*(?=</code)' \
+		| grep -oP '(?<=code>).*(?=</code)' \
 		| $menu --prompt='television: ') \
 		&& curl -sfL $url -O ;;
 	
@@ -85,7 +86,11 @@ case $1 in
 			[ -z "$urls" ] && exit \
 				|| $hide mpv "${urls##* }" --force-media-title="${urls%%  *}"
 		done
+		[ ! -f $favs_file ] && printf '%s\n' "you don't have any favorites yet"
 		;;
+	-E)
+		 $EDITOR $favs_file
+		 ;;
 	-e)
 		url=$(curl -Lsf  'https://www.tdtchannels.com/lists/tv.w3u' \
 			| jq -r '.groups[].stations[] | "\(.name), \(.url)"')
@@ -145,11 +150,7 @@ _favchannels () {
 	echo "$@" >> $favs_file
  }
 
-export -f _playvid
-export -f _onlyaudio
-export -f _getlink
-export -f _detachplayer
-export -f _favchannels
+export -f _playvid _onlyaudio _getlink _favchannels _detachplayer
 SHELL="$(command -v bash)"		     
 printf '%s\n' "${CHANNELS_LIST}" | $menu --with-nth="1..-2" \
 	--bind "$playvid:execute(_playvid {})" \
