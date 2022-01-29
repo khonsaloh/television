@@ -30,9 +30,17 @@ ve la televisión (iptv, a través de red) y escucha la radio de manera rápida,
 ```sh
 chmod +x television
 ```
-- si no se le pasa ningún parámetro, el guión de comandos lanzará un menú gráfico con los canales por defecto
-- con -e, tan solo dará resultados de canales relacionados con el español
-- -r buscara exclusivamente emisoras de radio ubicadas en españa 
+```sh
+options for television:
+ -r     para radio
+ -d     para descargar el archivo m3u
+ -e     para canales enfocados en español
+ -f     para elegir desde los favoritos
+ -E     para editar los favoritos
+ -u     para actualizar el script
+ -v     para imprimir la version
+ [sinbandera] para hacer una busqueda global de canales televisivos
+ ```
 
 # galería
 
@@ -47,7 +55,7 @@ chmod +x television
 
 
 # Créditos a
-[playlistmanager](https://github.com/jonniek/mpv-playlistmanager)
+[playlistmanager](https://github.com/jonniek/mpv-playlistmanager): en la rama playlist_manager
 
 #### las urls se obtienen raspando estas páginas:
 

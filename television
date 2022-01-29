@@ -8,6 +8,7 @@ dep_ck () {
 }
 dep_ck "fzf" "curl" "jq" "mpv" "gawk" #basic dependencies with no flag passed
 
+version=2.0.1
 y="\033[1;33m"
 re="\033[0m"
 main_url="https://iptv-org.github.io/iptv/channels.json"
@@ -33,13 +34,14 @@ export favs_file=~/.cache/television_favs
 : "${favschan:=alt-f}"
 
 help() {
-printf '%s\n' "options for $0:"
+printf '%s\n' "options for ${0##*/}:"
 printf '%b\n' " ${y}-r${re}\\tfor radio"
 printf '%b\n' " ${y}-d${re}\\tfor download the m3u file"
 printf '%b\n' " ${y}-e${re}\\tfor channels focused on spanish language"
 printf '%b\n' " ${y}-f${re}\\tto choose from favorites" 
 printf '%b\n' " ${y}-E${re}\\tto edit the favorites file" #delete stuff principaly
 printf '%b\n' " ${y}-u${re}\\tfor update this script" 
+printf '%b\n' " ${y}-v${re}\\tfor print version" 
 }
 update () {
 	update="$(curl -s "https://raw.githubusercontent.com/khonsaloh/television/master/television" | diff -u "$0" -)"
@@ -91,6 +93,9 @@ case $1 in
 	-E)
 		 $EDITOR $favs_file
 		 ;;
+	-v)
+		 printf '%b\n' "${0##*/} ${version}\\tfrom https://github.com/khonsaloh/television"
+		 ;;
 	-e)
 		url=$(curl -Lsf  'https://www.tdtchannels.com/lists/tv.w3u' \
 			| jq -r '.groups[].stations[] | "\(.name), \(.url)"')
@@ -112,8 +117,8 @@ esac
 
 channel_file=/tmp/channel_file.json #write file to ram for better speed during the session
 
-[ ! -f $channel_file ] && ( curl "$main_url" -o $channel_file -sL \
-	|| ( printf '%s\n' "it seems you don't have an internet conection" && kill $$))
+[ ! -f $channel_file ] && { curl "$main_url" -o $channel_file -sL \
+	|| ( printf '%s\n' "it seems you don't have an internet conection" && kill $$) }
 
 CHANNELS_LIST=$(jq -r '.[] | "\(.name) \t \(.categories[].name // "N/A") \t \(.languages|.[0].name // "N/A") \t \(.countries|.[0].name // "N/A") \t \(.url)"' $channel_file \
 	                | gawk -v max="${COLUMNS:-80}" 'BEGIN { RS="\n"; FS=" \t " }

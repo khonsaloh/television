@@ -37,15 +37,21 @@ watch television (iptv) and listen to radio, easy, fast and eficiently
 ```sh
 chmod +x television
 ```
-
-- if no flag is passed, the script will prompt you with a general selection of tv channels to choose from.
-- if -e is passed, It will only give you spanish related channels
-- -r refers to radio stations
-- check the playlist_manager branch for plugin addition
+```sh
+options for television:
+ -r     for radio
+ -d     for download the m3u file
+ -e     for channels focused on spanish language
+ -f     to choose from favorites
+ -E     to edit the favorites file
+ -u     for update this script
+ -v     for print version
+ [noflag] for tv global search
+ ```
 
 # credits
 
-[playlistmanager](https://github.com/jonniek/mpv-playlistmanager)
+[playlistmanager](https://github.com/jonniek/mpv-playlistmanager): the playlist_manager branch
 #### for the actual urls:
 
 - [TDTChannels](https://github.com/LaQuay/TDTChannels)
