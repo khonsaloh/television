@@ -7,8 +7,8 @@ ve la televisión (iptv, a través de red) y escucha la radio de manera rápida,
 
 #### este proyecto está creado de forma modular, se alimenta de otros repositorios (créditos debiamente otorgados mas abajo) altamente activos. este proyecto tan solo compone las piezas y las intercomunica para que todo engrane (o eso se ha intentado).
 
-# puntos a tener en cuenta:
-1. Acceso a más de 5000 canales televisivos que emiten en abierto desde todo el globo
+# características:
+1. Acceso a más de 7000 canales televisivos que emiten en abierto desde todo el globo
 2. Totalmente legal
 3. También permite el acceso rápido a emisoras españolas
 4. contenido no filtrado.
@@ -17,21 +17,28 @@ ve la televisión (iptv, a través de red) y escucha la radio de manera rápida,
 ## dependencias:
 ### se requiere que las siguientes utilidades estean instaladas en el equipo:
 
+### Esencial
+
+```text
 - mpv
 - gawk
 - curl
 - jq
 - fzf
-- xdotool (opcional) para ocultar ventana de fondo
+```
 
+### Opcional
+
+```text
+xdotool - para ocultar ventana de fondo
+diff - comprobar actualizaciones
+patch - actualizar el script
+grep - descargar lista de reproduccion
+```
 # uso
 
-#### da permisos de ejecucion
-```sh
-chmod +x television
-```
-```sh
-options for television:
+```text
+opciones para television:
  -r     para radio
  -d     para descargar el archivo m3u
  -e     para canales enfocados en español
@@ -41,18 +48,6 @@ options for television:
  -v     para imprimir la version
  [sinbandera] para hacer una busqueda global de canales televisivos
  ```
-
-# galería
-
-<a href="https://gitlab.com/khonsaloh/television/-/raw/master/capturas/20210227194546.png"><img src='https://gitlab.com/khonsaloh/television/-/raw/master/capturas/20210227194546.png'></a>
-
-<a href="https://gitlab.com/khonsaloh/television/-/raw/master/capturas/20210227194343.png "><img src='https://gitlab.com/khonsaloh/television/-/raw/master/capturas/20210227194343.png '></a>
-
-<a href="https://gitlab.com/khonsaloh/television/-/raw/master/capturas/tv-franc.png"><img src='https://gitlab.com/khonsaloh/television/-/raw/master/capturas/tv-franc.png'></a>
-
-### escaneo por virustotal satisfactorio
-<a href="https://www.virustotal.com/gui/file/2c6ea9bf164d3f3da0382501579f955dc8da39eeb32c1492cbf9c6cb91d71368/detection" target="_blank" rel="nofollow noopener noreferrer">Sin sorpresas desagradables</a>
-
 
 # Créditos a
 [playlistmanager](https://github.com/jonniek/mpv-playlistmanager): en la rama playlist_manager

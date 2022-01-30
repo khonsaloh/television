@@ -12,32 +12,50 @@
 
 watch television (iptv) and listen to radio, easy, fast and eficiently
 
-# Points you may consider:
-
-1. Access granted to more than 5000 tv channels from over the world
-2. It is legal and free
-3. Fast access to spanish radio stations as a spaniard culture symbolism
-4. rated r content did not was removed! be aware!
-
 ## [documentación en español](./léeme.md)
 
-## dependencies:
+## Table of Contents
+- [Features](#Features)
+- [Usage](#Usage)
+- [Dependencies](#Dependencies)
+- [Installation](#Installation)
+  - [Linux](#Linux)
+  - [Mac](#Mac)
+  - [Windows](#Windows)
+- [Credits](#Credits)
 
+
+# Features:
+
+1. Access granted to more than 7000 tv channels from over the world
+2. It is legal and free
+4. possiblity to customize favorites
+5. rated r content did not was removed! be aware!
+
+# Dependencies
+
+### Essential
+
+```text
 - mpv
 - gawk
 - curl
 - jq
 - fzf
-- xdotool (optional) for swallow window
-
-
-# usage
-
-#### make it executable:
-```sh
-chmod +x television
 ```
-```sh
+
+### Optional
+
+```text
+xdotool - swallow terminal window 
+diff - check updates
+patch - update script
+grep - download playlist
+```
+
+# Usage
+
+```text
 options for television:
  -r     for radio
  -d     for download the m3u file
@@ -49,7 +67,46 @@ options for television:
  [noflag] for tv global search
  ```
 
-# credits
+# Installation
+
+#### any of the methods listed below should work
+
+### Linux
+
+```sh
+git clone https://github.com/khonsaloh/television
+cd television
+sudo cp television /usr/local/bin/television
+sudo chmod +x /usr/local/bin/television
+```
+
+### Mac
+
+```sh
+git clone https://github.com/khonsaloh/television
+cd television
+cp television /usr/local/bin/television
+sudo chmod +x /usr/local/bin/television
+```
+
+### Windows
+
+* Download and install [dependencies](#Dependencies)
+* Download and install [git bash](https://git-scm.com/downloads)
+* Open git bash by right-clicking and choosing "Run as administrator"
+* Run the following commands
+
+```sh
+git clone https://github.com/khonsaloh/television.git
+cd television
+mkdir -p "$(USERPROFILE)/.cache"
+cp television $WINDIR/system32/television
+```
+
+## Uninstall
+Just remove it from path
+
+# Credits
 
 [playlistmanager](https://github.com/jonniek/mpv-playlistmanager): the playlist_manager branch
 #### for the actual urls:

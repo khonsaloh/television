@@ -8,14 +8,14 @@ dep_ck () {
 }
 dep_ck "fzf" "curl" "jq" "mpv" "gawk" #basic dependencies with no flag passed
 
-version=2.0.1
+version=2.1.0
 y="\033[1;33m"
 re="\033[0m"
 main_url="https://iptv-org.github.io/iptv/channels.json"
 menu="fzf -e -i --reverse --cycle"
 
 #environment variables 
-: "${TELE_CONFIG:=${XDG_CONFIG_HOME:-$HOME/.config}/television}"
+: "${TELE_CONFIG:=${XDG_CONFIG_HOME:-$HOME/.config}/television.conf}"
 
 # allow custom variables in configuration file
 [ -f "$TELE_CONFIG" ] && . "$TELE_CONFIG"
@@ -42,6 +42,12 @@ printf '%b\n' " ${y}-f${re}\\tto choose from favorites"
 printf '%b\n' " ${y}-E${re}\\tto edit the favorites file" #delete stuff principaly
 printf '%b\n' " ${y}-u${re}\\tfor update this script" 
 printf '%b\n' " ${y}-v${re}\\tfor print version" 
+printf '%b\n' "\\nkeybinds"
+printf '%b\n' " ${playvid}\\t for play video"
+printf '%b\n' " ${detachplayer}\\t for detaching player"
+printf '%b\n' " ${onlyaudio}\\t for play only audio"
+printf '%b\n' " ${getlink}\\t for get link"
+printf '%b\n' " ${favschan}\\t for adding channel to favorites "
 }
 update () {
 	update="$(curl -s "https://raw.githubusercontent.com/khonsaloh/television/master/television" | diff -u "$0" -)"
@@ -52,16 +58,15 @@ update () {
 			&& printf "%s\n" "Script has been updated"
 	fi
 }
-
-hide_win () {
+command -v _hide_win >/dev/null || _hide_win () {
 	vent=$(xdotool getactivewindow) \
 		&& xdotool windowunmap $vent
 	"$@"
 	xdotool windowmap $vent
 }
 
-export -f hide_win
-command -v xdotool >/dev/null && export hide=hide_win
+export -f _hide_win
+command -v xdotool >/dev/null && export hide=_hide_win
 
 case $1 in
 	-r)
@@ -94,7 +99,7 @@ case $1 in
 		 $EDITOR $favs_file
 		 ;;
 	-v)
-		 printf '%b\n' "${0##*/} ${version}\\tfrom https://github.com/khonsaloh/television"
+		 printf '%b\n' "${0##*/} ${version}\\tpowered by https://github.com/khonsaloh/television"
 		 ;;
 	-e)
 		url=$(curl -Lsf  'https://www.tdtchannels.com/lists/tv.w3u' \

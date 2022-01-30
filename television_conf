@@ -1,4 +1,5 @@
 
+## EXAMPLE CONFIGURATION ##
 #fzf bindings
 # playvid=enter
 # detachplayer=alt-d
@@ -6,3 +7,13 @@
 # getlink=alt-l
 # favschan=alt-f
 
+# _hide_win () {
+# devour "$@"
+# }
+
+# _hide_win() {
+	#vent=$(xdo id) \
+	#	&& xdo hide $vent
+	#"$@"
+	#xdo show $vent
+# }
