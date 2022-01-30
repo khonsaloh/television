@@ -9,4 +9,4 @@
 !plugins/*
 !plugins/*/*
 !/assets
-!television_conf
+!television.conf

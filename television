@@ -59,14 +59,13 @@ update () {
 	fi
 }
 command -v _hide_win >/dev/null || _hide_win () {
-	vent=$(xdotool getactivewindow) \
-		&& xdotool windowunmap $vent
-	"$@"
-	xdotool windowmap $vent
+		vent=$(xdotool getactivewindow 2>/dev/null) \
+		&& xdotool windowunmap $vent 2>/dev/null
+			"$@"
+		xdotool windowmap $vent 2>/dev/null
 }
-
 export -f _hide_win
-command -v xdotool >/dev/null && export hide=_hide_win
+export hide=_hide_win
 
 case $1 in
 	-r)
