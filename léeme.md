@@ -52,12 +52,10 @@ opciones para television:
 # Créditos a
 [playlistmanager](https://github.com/jonniek/mpv-playlistmanager): en la rama playlist_manager
 
-#### las urls se obtienen raspando estas páginas:
+#### por las urls:
 
 - [TDTChannels](https://github.com/LaQuay/TDTChannels)
 - [iptv](https://github.com/iptv-org/iptv)
-
-el software se distribuye sin ningún tipo de garantía, cualquier uso que un tercero pueda darle queda a responsabilidad del propio usuario
 
 ## [**volver**](./)
 

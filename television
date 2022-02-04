@@ -20,10 +20,6 @@ menu="fzf -e -i --reverse --cycle"
 # allow custom variables in configuration file
 [ -f "$TELE_CONFIG" ] && . "$TELE_CONFIG"
 
-# History=0 dont see the point of (dis)allow history
-# hide_win=1
-# : "${player:=mpv}"
-# : "${player_options:=mpv}"
 export favs_file=~/.cache/television_favs
 
 #fzf bindings
@@ -121,10 +117,10 @@ esac
 
 channel_file=/tmp/channel_file.json #write file to ram for better speed during the session
 
-[ ! -f $channel_file ] && { curl "$main_url" -o $channel_file -sL \
+[ ! -f $channel_file ] && { curl "$main_url" -H "accept-encoding:gzip" --compressed -o $channel_file -sL \
 	|| ( printf '%s\n' "it seems you don't have an internet conection" && kill $$) }
 
-CHANNELS_LIST=$(jq -r '.[] | "\(.name) \t \(.categories[].name // "N/A") \t \(.languages|.[0].name // "N/A") \t \(.countries|.[0].name // "N/A") \t \(.url)"' $channel_file \
+CHANNELS=$(jq -r '.[] | "\(.name) \t \(.categories[].name // "N/A") \t \(.languages|.[0].name // "N/A") \t \(.countries|.[0].name // "N/A") \t \(.url)"' $channel_file \
 	                | gawk -v max="${COLUMNS:-80}" 'BEGIN { RS="\n"; FS=" \t " }
                     {
 	               name = substr(gensub(/[0-9]+\.\s*(.*)/, "\\1", "g", $1),0,max/4)
@@ -161,7 +157,7 @@ _favchannels () {
 
 export -f _playvid _onlyaudio _getlink _favchannels _detachplayer
 SHELL="$(command -v bash)"		     
-printf '%s\n' "${CHANNELS_LIST}" | $menu --with-nth="1..-2" \
+printf '%s\n' "${CHANNELS}" | $menu --with-nth="1..-2" \
 	--bind "$playvid:execute(_playvid {})" \
 	--bind "$onlyaudio:execute(_onlyaudio {})" \
 	--bind "$getlink:execute(_getlink {})" \
