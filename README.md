@@ -89,6 +89,16 @@ cd television
 cp television /usr/local/bin/television
 sudo chmod +x /usr/local/bin/television
 ```
+### Android
+
+Install termux [(Guide)](https://termux.com/)
+
+```sh
+pkg install git make fzf curl gawk -y
+git clone https://github.com/khonsaloh/television && cd television
+cp television $PREFIX/bin/television
+echo 'termux-open "$2"' > $PREFIX/bin/mpv
+```
 
 ### Windows
 
