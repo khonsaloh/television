@@ -6,7 +6,7 @@ dep_ck () {
 			|| { printf '%s\n' "$dep not found. Please install it."; exit 2; }
 	done
 }
-dep_ck "fzf" "curl" "jq" "mpv" "gawk" #basic dependencies with no flag passed
+dep_ck "fzf" "curl" "jq" "gawk" #basic dependencies with no flag passed
 
 version=2.1.0
 y="\033[1;33m"
@@ -131,16 +131,16 @@ CHANNELS=$(jq -r '.[] | "\(.name) \t \(.categories[].name // "N/A") \t \(.langua
 	               print name "\t|" category "\t|" languages "\t|" countries "\t" channelUrl
 	              }' | column -t -s $'\t')
 
-_playvid() {
+command -v _playvid >/dev/null || _playvid() {
 	printf '%s\n' "Fetching channel..."
 	$hide mpv "${*##* }" --really-quiet --force-media-title="${*%%  *}"
 	}
  
-_detachplayer() {
+command -v _detachplayer >/dev/null || _detachplayer() {
  	printf '%s\n' "Fetching channel..."
  	{ setsid -f mpv "${*##* }" --really-quiet --force-media-title="${*%%  *}" & }
 }
-_onlyaudio() {
+command -v _onlyaudio >/dev/null || _onlyaudio() {
 	printf '%s\n' "Fetching channel..."
 	tput civis; printf '%s\n' "${*%%  *}"
 	mpv "${*##* }" --no-video --really-quiet --force-media-title="${*%%  *}"

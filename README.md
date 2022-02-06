@@ -29,15 +29,16 @@ watch television (iptv) and listen to radio, easy, fast and eficiently
 
 1. Access granted to more than 7000 tv channels from over the world
 2. It is legal and free
-4. possiblity to customize favorites
-5. rated r content did not was removed! be aware!
+3. possiblity to customize favorites
+4. rated r content did not was removed! be aware!
+5. support for several players out of the box
 
 # Dependencies
 
 ### Essential
 
 ```text
-- mpv
+- a player able to play m3u8 files
 - gawk
 - curl
 - jq

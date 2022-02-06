@@ -20,7 +20,7 @@ ve la televisión (iptv, a través de red) y escucha la radio de manera rápida,
 ### Esencial
 
 ```text
-- mpv
+- un reproductor capaz de reproduccir archivos m3u8, por defecto busca por mpv
 - gawk
 - curl
 - jq
