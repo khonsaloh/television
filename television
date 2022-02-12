@@ -115,7 +115,7 @@ esac
 
 [ $* ] && exit
 
-channel_file=/tmp/channel_file.json #write file to ram for better speed during the session
+[ $TERMUX_VERSION ] && channel_file=$HOME/channel_file.json || channel_file=/tmp/channel_file.json #write file to ram for better speed during the session
 
 [ ! -f $channel_file ] && { curl "$main_url" -H "accept-encoding:gzip" --compressed -o $channel_file -sL \
 	|| ( printf '%s\n' "it seems you don't have an internet conection" && kill $$) }
@@ -133,7 +133,8 @@ CHANNELS=$(jq -r '.[] | "\(.name) \t \(.categories[].name // "N/A") \t \(.langua
 
 command -v _playvid >/dev/null || _playvid() {
 	printf '%s\n' "Fetching channel..."
-	$hide mpv "${*##* }" --really-quiet --force-media-title="${*%%  *}"
+	[ $TERMUX_VERSION ] && termux-open "${*##* }" \
+		|| $hide mpv "${*##* }" --really-quiet --force-media-title="${*%%  *}"
 	}
  
 command -v _detachplayer >/dev/null || _detachplayer() {

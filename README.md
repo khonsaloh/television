@@ -94,10 +94,9 @@ sudo chmod +x /usr/local/bin/television
 Install termux [(Guide)](https://termux.com/)
 
 ```sh
-pkg install git make fzf curl gawk -y
-git clone https://github.com/khonsaloh/television && cd television
-cp television $PREFIX/bin/television
-echo 'termux-open "$2"' > $PREFIX/bin/mpv
+pkg install jq fzf curl gawk -y
+curl https://raw.githubusercontent.com/khonsaloh/television/master/television -O
+chmod +x television
 ```
 
 ### Windows

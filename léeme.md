@@ -13,6 +13,7 @@ ve la televisión (iptv, a través de red) y escucha la radio de manera rápida,
 3. También permite el acceso rápido a emisoras españolas
 4. contenido no filtrado.
 5. escrito en el standard posix, lo que favorece a su portabilidad entre sistemas derivados de UNIX (gnu/linux, macOS, freebsd... por nombrar a algunos)
+6. también soporta android
 
 ## dependencias:
 ### se requiere que las siguientes utilidades estean instaladas en el equipo:
