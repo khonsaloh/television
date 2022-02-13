@@ -71,7 +71,7 @@ case $1 in
 			selection=$(printf '%s\n' "$url" \
 				| $menu --with-nth="1..-2" --prompt='radio: ')
 			[ -z "$selection" ] && { tput cnorm 2>/dev/null; exit; }
-			[ $TERMUX_VERSION ] && termux-open "${selection%%,*}" \
+			[ $TERMUX_VERSION ] && termux-open "${selection##* }" \
 				|| { tput civis; echo "${selection%%,*}" \
 				&& mpv "${selection##* }" --force-media-title="${selection%%  *}"; }
 		done
