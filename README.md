@@ -91,13 +91,14 @@ sudo chmod +x /usr/local/bin/television
 ```
 ### Android
 
-Install termux [(Guide)](https://termux.com/)
+Install termux [(Guide)](https://termux.com/), and a video player capable of streaming urls (mpv and vlc from play store or fdroid work fine, but there are several out there)
 
 ```sh
 pkg install jq fzf curl gawk -y
 curl https://raw.githubusercontent.com/khonsaloh/television/master/television -O
 chmod +x television
 ```
+I recommend [termux widget](https://wiki.termux.com/wiki/Termux:Widget) for convenience and speed
 
 ### Windows
 

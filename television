@@ -8,7 +8,7 @@ dep_ck () {
 }
 dep_ck "fzf" "curl" "jq" "gawk" #basic dependencies with no flag passed
 
-version=2.1.0
+version=2.2.0
 y="\033[1;33m"
 re="\033[0m"
 main_url="https://iptv-org.github.io/iptv/channels.json"
@@ -70,9 +70,10 @@ case $1 in
 		while [ "$url" ]; do
 			selection=$(printf '%s\n' "$url" \
 				| $menu --with-nth="1..-2" --prompt='radio: ')
-			[ -z "$selection" ] && tput cnorm && exit
-			tput civis; echo "${selection%%,*}"
-			mpv "${selection##* }" --force-media-title="${selection%%  *}"
+			[ -z "$selection" ] && { tput cnorm 2>/dev/null; exit; }
+			[ $TERMUX_VERSION ] && termux-open "${selection%%,*}" \
+				|| { tput civis; echo "${selection%%,*}" \
+				&& mpv "${selection##* }" --force-media-title="${selection%%  *}"; }
 		done
 		;;
 	
@@ -86,6 +87,7 @@ case $1 in
 		while [ -f $favs_file ]; do
 		urls=$($menu --with-nth="1..-2" < $favs_file )
 			[ -z "$urls" ] && exit \
+				|| [ $TERMUX_VERSION ] && termux-open "${urls##* }" \
 				|| $hide mpv "${urls##* }" --force-media-title="${urls%%  *}"
 		done
 		[ ! -f $favs_file ] && printf '%s\n' "you don't have any favorites yet"
