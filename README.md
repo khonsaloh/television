@@ -10,7 +10,7 @@
 
 # television
 
-watch television (iptv) and listen to radio, easy, fast and eficiently
+watch television (iptv) and listen to radio over the internet
 
 ## [documentación en español](./léeme.md)
 
@@ -19,8 +19,10 @@ watch television (iptv) and listen to radio, easy, fast and eficiently
 - [Usage](#Usage)
 - [Dependencies](#Dependencies)
 - [Installation](#Installation)
-  - [Linux](#Linux)
-  - [Mac](#Mac)
+  - [Linux](#Linux/Mac/Bsd)
+  - [Mac](#Linux/Mac/Bsd)
+  - [Bsd](#Linux/Mac/Bsd)
+  - [Android](#Android)
   - [Windows](#Windows)
 - [Credits](#Credits)
 
@@ -29,7 +31,7 @@ watch television (iptv) and listen to radio, easy, fast and eficiently
 
 1. Access granted to more than 7000 tv channels from over the world
 2. It is legal and free
-3. possiblity to customize favorites
+3. possibility to customize favorites
 4. rated r content did not was removed! be aware!
 5. support for several players out of the box
 
@@ -72,7 +74,7 @@ options for television:
 
 #### any of the methods listed below should work
 
-### Linux
+### Linux/Mac/Bsd
 
 ```sh
 git clone https://github.com/khonsaloh/television
@@ -81,14 +83,6 @@ sudo cp television /usr/local/bin/television
 sudo chmod +x /usr/local/bin/television
 ```
 
-### Mac
-
-```sh
-git clone https://github.com/khonsaloh/television
-cd television
-cp television /usr/local/bin/television
-sudo chmod +x /usr/local/bin/television
-```
 ### Android
 
 Install termux [(Guide)](https://termux.com/), and a video player capable of streaming urls (mpv and vlc from play store or fdroid work fine, but there are several out there)

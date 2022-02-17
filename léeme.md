@@ -3,9 +3,7 @@
 
 # television
 
-ve la televisión (iptv, a través de red) y escucha la radio de manera rápida, sin complicaciones 
-
-#### este proyecto está creado de forma modular, se alimenta de otros repositorios (créditos debiamente otorgados mas abajo) altamente activos. este proyecto tan solo compone las piezas y las intercomunica para que todo engrane (o eso se ha intentado).
+solución multiplataforma para televisión y radio a través de red
 
 # características:
 1. Acceso a más de 7000 canales televisivos que emiten en abierto desde todo el globo

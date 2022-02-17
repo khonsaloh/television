@@ -8,7 +8,7 @@ dep_ck () {
 }
 dep_ck "fzf" "curl" "jq" "gawk" #basic dependencies with no flag passed
 
-version=2.2.0
+version=2.3.0
 y="\033[1;33m"
 re="\033[0m"
 main_url="https://iptv-org.github.io/iptv/channels.json"
@@ -117,7 +117,10 @@ esac
 
 [ $* ] && exit
 
-[ $TERMUX_VERSION ] && channel_file=$HOME/channel_file.json || channel_file=/tmp/channel_file.json #write file to ram for better speed during the session
+[ $TERMUX_VERSION ] && channel_file=$HOME/.cache/channel_file.json \
+	&& [ $(($(date +%s) - $(date +%s -r Makefile) -gt 90000)) ] \
+	&& curl "$main_url" -H "accept-encoding:gzip" --compressed -o $channel_file -sL \
+	|| channel_file=/tmp/channel_file.json #write file to ram for better speed during the session
 
 [ ! -f $channel_file ] && { curl "$main_url" -H "accept-encoding:gzip" --compressed -o $channel_file -sL \
 	|| ( printf '%s\n' "it seems you don't have an internet conection" && kill $$) }
