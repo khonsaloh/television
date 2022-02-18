@@ -8,13 +8,13 @@ dep_ck () {
 }
 dep_ck "fzf" "curl" "jq" "gawk" #basic dependencies with no flag passed
 
-version=2.3.1
+version=2.3.2
 y="\033[1;33m"
 re="\033[0m"
 main_url="https://iptv-org.github.io/iptv/channels.json"
 menu="fzf -e -i --reverse --cycle"
 
-#environment variables 
+#environment variables
 : "${TELE_CONFIG:=${XDG_CONFIG_HOME:-$HOME/.config}/television.conf}"
 
 # allow custom variables in configuration file
@@ -76,13 +76,13 @@ case $1 in
 				&& mpv "${selection##* }" --force-media-title="${selection%%  *}"; }
 		done
 		;;
-	
-	-d) 
+
+	-d)
 		url=$(curl -Lsf 'https://raw.githubusercontent.com/iptv-org/iptv/master/README.md' \
 		| grep -oP '(?<=code>).*(?=</code)' \
 		| $menu --prompt='television: ') \
 		&& curl -sfL $url -O ;;
-	
+
 	-f)
 		while [ -f $favs_file ]; do
 		urls=$($menu --with-nth="1..-2" < $favs_file )
@@ -108,19 +108,19 @@ case $1 in
 				|| $hide mpv "${selection##* }" --force-media-title="${selection%%,*}"
 		done
 		;;
-	 -u) 
+	 -u)
 		update
 		;;
-	
+
 	*) [ $* ] && help ;;
 esac
 
 [ $* ] && exit
 
-[ $TERMUX_VERSION ] && channel_file=$HOME/.cache/channel_file.json \
-	&& [ $(($(date +%s) - $(date +%s -r $channel_file) )) -gt 90000 ] \
-	&& curl "$main_url" -H "accept-encoding:gzip" --compressed -o $channel_file -sL \
-	|| channel_file=/tmp/channel_file.json #write file to ram for better speed during the session
+[ ! $TERMUX_VERSION ] && channel_file=/tmp/channel_file.json || { channel_file=$HOME/.cache/channel_file.json \
+	&& [ -f $channel_file ] && [ $(($(date +%s) - $(date +%s -r $channel_file) )) -gt 90000 ] \
+	&& curl "$main_url" -H "accept-encoding:gzip" --compressed -o $channel_file -sL; }
+	 #write file to ram for better speed during the session
 
 [ ! -f $channel_file ] && { curl "$main_url" -H "accept-encoding:gzip" --compressed -o $channel_file -sL \
 	|| ( printf '%s\n' "it seems you don't have an internet conection" && kill $$) }
@@ -141,7 +141,7 @@ command -v _playvid >/dev/null || _playvid() {
 	[ $TERMUX_VERSION ] && termux-open "${*##* }" \
 		|| $hide mpv "${*##* }" --really-quiet --force-media-title="${*%%  *}"
 	}
- 
+
 command -v _detachplayer >/dev/null || _detachplayer() {
  	printf '%s\n' "Fetching channel..."
  	{ setsid -f mpv "${*##* }" --really-quiet --force-media-title="${*%%  *}" & }
@@ -162,7 +162,7 @@ _favchannels () {
  }
 
 export -f _playvid _onlyaudio _getlink _favchannels _detachplayer
-SHELL="$(command -v bash)"		     
+SHELL="$(command -v bash)"
 printf '%s\n' "${CHANNELS}" | $menu --with-nth="1..-2" \
 	--bind "$playvid:execute(_playvid {})" \
 	--bind "$onlyaudio:execute(_onlyaudio {})" \
