@@ -48,6 +48,10 @@ opciones para television:
  [sinbandera] para hacer una busqueda global de canales televisivos
  ```
 
+si eres programador o un power user y tienes alguna idea sobre como mejorar u optimizar el código manda un pull-request a la rama dev
+
+si hay alguna estación de radio o canal televisivo que deseas añadir manda una petición a [TDTChannels](https://github.com/LaQuay/TDTChannels) o [iptv](https://github.com/iptv-org/iptv)
+
 # Créditos a
 [playlistmanager](https://github.com/jonniek/mpv-playlistmanager): en la rama playlist_manager
 

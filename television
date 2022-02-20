@@ -117,8 +117,8 @@ esac
 
 [ $* ] && exit
 
-[ ! $TERMUX_VERSION ] && channel_file=/tmp/channel_file.json || { channel_file=$HOME/.cache/channel_file.json \
-	&& [ -f $channel_file ] && [ $(($(date +%s) - $(date +%s -r $channel_file) )) -gt 90000 ] \
+[ ! $TERMUX_VERSION ] && channel_file=/tmp/channel_file.json || { channel_file=$HOME/.cache/channel_file.json;
+	[ -f $channel_file ] && [ $(($(date +%s) - $(date +%s -r $channel_file) )) -gt 90000 ] \
 	&& curl "$main_url" -H "accept-encoding:gzip" --compressed -o $channel_file -sL; }
 	 #write file to ram for better speed during the session
 

@@ -1,8 +1,6 @@
 ## Buy me a coffee
 <a href="https://www.paypal.me/60nza10"><img src="https://img.shields.io/badge/don-paypal-blue"></a> 
 
-#### contributors are welcome with jq and json parsing
-
 ##
 <p align="center">
 <img src="./assets/sample.gif" alt="sample" width="100%">>
@@ -19,12 +17,14 @@ watch television (iptv) and listen to radio over the internet
 - [Usage](#Usage)
 - [Dependencies](#Dependencies)
 - [Installation](#Installation)
-  - [Linux](#Linux/Mac/Bsd)
-  - [Mac](#Linux/Mac/Bsd)
-  - [Bsd](#Linux/Mac/Bsd)
-  - [Android](#Android)
-  - [Windows](#Windows)
-- [Credits](#Credits)
+  - [Linux](#linuxmacbsd)
+  - [Mac](#linuxmacbsd)
+  - [Bsd](#linuxmacbsd)
+  - [Android](#android)
+  - [Windows](#windows)
+- [Contribution](#contribution)
+- [Credits](#credits)
+- [License](#license)
 
 
 # Features:
@@ -111,6 +111,11 @@ cp television $WINDIR/system32/television
 ## Uninstall
 Just remove it from path
 
+## Contribution
+
+contributors are welcome, just make a pr to the dev branch
+if there is a radio station or tv channel you'd like to add send a petition to [TDTChannels](https://github.com/LaQuay/TDTChannels) or [iptv](https://github.com/iptv-org/iptv)
+
 # Credits
 
 [playlistmanager](https://github.com/jonniek/mpv-playlistmanager): the playlist_manager branch
@@ -119,6 +124,6 @@ Just remove it from path
 - [TDTChannels](https://github.com/LaQuay/TDTChannels)
 - [iptv](https://github.com/iptv-org/iptv)
 
-## Licence
+## License
 
 The content of this repository is licensed under the MIT Licence. Basically, that gives you the right to use, copy, modify, etc. the content how you see fit. You can read the full licence terms here ([https://opensource.org/licenses/MIT](https://opensource.org/licenses/MIT)).
