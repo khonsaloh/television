@@ -1,0 +1,7 @@
+[Desktop Entry]
+Version=2.2
+Name=television
+Comment=Watch television and listen to radio over the internet
+Exec=env FDELAY=1 television
+Type=Application
+Terminal=true

@@ -8,9 +8,9 @@ dep_ck () {
 }
 dep_ck "fzf" "curl" "jq" "gawk"
 
-version=2.3.3
+version=2.4.1
 main_url="https://iptv-org.github.io/iptv/channels.json"
-menu="fzf -e -i --reverse --cycle"
+menu="fzf -e -i --layout=reverse --cycle --inline-info --border=${BORDER:-sharp}"
 
 #environment variables
 : "${TELE_CONFIG:=${XDG_CONFIG_HOME:-$HOME/.config}/television.conf}"
@@ -159,6 +159,18 @@ _favchannels () {
 	echo "$@" >> $favs_file
  }
 
+_colorize() {
+  local string
+  string="${1//\[/\\033\[0;32m\[}"
+  string="${string//\]/\]\\033\[0m}"
+  printf '%b\n' "${string}"
+}
+
+HEADER_TV="$(_colorize "[${playvid}] Play channel [Escape] Exit
+[${detachplayer^^}] Detach player [${onlyaudio^^}] Only audio [${getlink^^}] Get link")
+
+"
+
 export -f _playvid _onlyaudio _getlink _favchannels _detachplayer
 SHELL="$(command -v bash)"
 printf '%s\n' "${CHANNELS}" | $menu --with-nth="1..-2" \
@@ -167,4 +179,5 @@ printf '%s\n' "${CHANNELS}" | $menu --with-nth="1..-2" \
 	--bind "$getlink:execute(_getlink {})" \
 	--bind "$detachplayer:execute(_detachplayer {})" \
 	--bind "$favschan:execute(_favchannels {})" \
-	--header="Select channel (press Escape to exit)" -q "${*:-}" 
+	--prompt "Search: " \
+  --header="${HEADER_TV}" -q "${*:-}" 
