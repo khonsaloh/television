@@ -43,7 +43,7 @@ help() {
   printf '%s\t%s\n' " ${getlink}" "for get link"
   printf '%s\t%s\n' " ${favschan}" "for adding channel to favorites "
 }
-update () {
+_update () {
 	update="$(curl -s "https://raw.githubusercontent.com/khonsaloh/television/master/television" | diff -u "$0" -)"
 	if [ -z "$update" ]; then
 		printf "%s\n" "Script is up to date"
@@ -63,15 +63,15 @@ export hide=_hide_win
 
 case $1 in
 	-r)
-		url=$(curl -Lsf  'https://www.tdtchannels.com/lists/radio.w3u' \
-			| jq -r '.groups[].stations[] | "\(.name), \(.url)"')
+		url=$(curl -sl 'https://www.tdtchannels.com/lists/radio.json' \
+      | jq -r '.countries[].ambits[].channels[] | "\(.name // "N/A") \t \(.options[].url // "N/A")"' )
 		while [ "$url" ]; do
 			selection=$(printf '%s\n' "$url" \
-				| $menu --with-nth="1..-2" --prompt='radio: ')
+        | $menu --with-nth="1" -d'\t' --prompt='radio: ')
 			[ -z "$selection" ] && { tput cnorm 2>/dev/null; exit; }
 			[ $TERMUX_VERSION ] && termux-open "${selection##* }" \
-				|| { tput civis; echo "${selection%%,*}" \
-				&& mpv "${selection##* }" --force-media-title="${selection%%  *}"; }
+				|| { tput civis; echo "${selection%% ht*}" \
+				&& mpv "${selection##* }" --force-media-title="${selection%% ht*}"; }
 		done
 		;;
 
@@ -97,17 +97,17 @@ case $1 in
 		printf '%s\t%s\n' "${0##*/} ${version}" "powered by https://github.com/khonsaloh/television"
 		 ;;
 	-e)
-		url=$(curl -Lsf  'https://www.tdtchannels.com/lists/tv.w3u' \
-			| jq -r '.groups[].stations[] | "\(.name), \(.url)"')
+		url=$(curl -Lsf  'https://www.tdtchannels.com/lists/tv.json' \
+      | jq -r '.countries[].ambits[].channels[] | "\(.name // "N/A") \t \(.options[].url // "N/A")"' )
 		while [ "$url" ]; do
 			selection=$(printf '%s\n' "$url" \
-				| $menu --with-nth="1..-2" --prompt='television: ')
+				| $menu --delimiter="\t" --with-nth="1" --prompt='television: ')
 			[ -z "$selection" ] && exit \
-				|| $hide mpv "${selection##* }" --force-media-title="${selection%%,*}"
+				|| $hide mpv "${selection##* }" --force-media-title="${selection%% htt*}"
 		done
 		;;
 	 -u)
-		update
+		_update
 		;;
 
 	*) [ $* ] && help ;;
